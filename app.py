@@ -4,7 +4,7 @@ import subprocess
 import os
 import uuid
 import docker
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, render_template_string
 import socket
 
 app = Flask(__name__)
@@ -465,6 +465,169 @@ def deploy_to_workspaces():
 def terraform_localstack():
     return render_template("localstack_info.html")
 
+
+
+from flask import Response
+import subprocess
+
+@app.route("/terraform/localstack/install")
+def install_localstack():
+    # Step 1: Check if LocalStack container is already running
+    try:
+        result = subprocess.run(
+            ["docker", "ps", "--filter", "ancestor=localstack/localstack", "--format", "{{.ID}}"],
+            capture_output=True, text=True
+        )
+        if result.stdout.strip():
+            html = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>LocalStack Status</title>
+                </head>
+                <body style="font-family: Arial, sans-serif;">
+                    <h2>✅ LocalStack is already running!</h2>
+                    <p>You can access it at: 
+                        <a href="http://localhost:4566" target="_blank">http://localhost:4566</a>
+                    </p>
+                    <p>🧰 <a href="https://docs.localstack.cloud/get-started/installation/" target="_blank">
+                        Official Installation Docs</a>
+                    </p>
+                    <br>
+                    <a href="/terraform/localstack">
+                        <button style="padding: 10px 20px; background-color: #2b6cb0; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            ⬅️ Back to LocalStack Info
+                        </button>
+                    </a>
+
+                    <a href="/terraform/localstack/tutorials">
+                    <button style="padding: 10px 20px; background-color: #2b6cb0; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        LocalStack Tutorials
+                    </button>
+                </a>
+                </body>
+                </html>
+            """
+            return Response(html, mimetype="text/html")
+    except Exception as e:
+        return Response(f"<h2>❌ Error checking Docker containers: {e}</h2>", mimetype="text/html")
+
+    # Step 2: Run LocalStack using docker run
+    try:
+        subprocess.Popen([
+            "docker", "run",
+            "--rm", "-d",
+            "-p", "4566:4566",
+            "-p", "4510-4559:4510-4559",
+            "-v", "/var/run/docker.sock:/var/run/docker.sock",
+            "localstack/localstack"
+        ])
+        html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>LocalStack Starting</title>
+            </head>
+            <body style="font-family: Arial, sans-serif;">
+                <h2>🚀 LocalStack is starting up!</h2>
+                <p>Wait a few seconds, then access it here: 
+                    <a href="http://localhost:4566" target="_blank">http://localhost:4566</a>
+                </p>
+                <p>🧰 <a href="https://docs.localstack.cloud/get-started/installation/" target="_blank">
+                    Official Installation Docs</a>
+                </p>
+                <br>
+                <a href="/terraform/localstack">
+                    <button style="padding: 10px 20px; background-color: #2b6cb0; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        ⬅️ Back to LocalStack Info
+                    </button>
+                </a>
+                <a href="/terraform/localstack/tutorials">
+                    <button style="padding: 10px 20px; background-color: #2b6cb0; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        LocalStack Tutorials
+                    </button>
+                </a>
+            </body>
+            </html>
+        """
+        return Response(html, mimetype="text/html")
+
+    except Exception as e:
+        return Response(f"<h2>❌ Error launching LocalStack: {e}</h2>", mimetype="text/html")
+
+import os
+
+TERRAFORM_BASE_LOCALSTACK = os.path.abspath("localstack")
+
+@app.route("/terraform/localstack/tutorials", methods=["GET"])
+def terraform_localstack_tutorials():
+    try:
+        modules = sorted(os.listdir(TERRAFORM_BASE_LOCALSTACK))
+        return render_template("tf_tutorials_localstack.html", modules=modules)
+    except Exception as e:
+        return f"<pre>❌ Error loading tutorials: {str(e)}</pre>"
+
+
+
+
+
+@app.route("/terraform/localstack/tutorials/<module>/", methods=["GET"])
+def preview_localstack_module(module):
+    module_path = os.path.join(TERRAFORM_BASE_LOCALSTACK, module)
+
+    try:
+        main_tf = os.path.join(module_path, "main.tf")
+        tfvars = os.path.join(module_path, "terraform.tfvars")
+
+        if not os.path.exists(main_tf):
+            return f"<pre>❌ main.tf not found in {module}</pre>"
+
+        main_content = open(main_tf).read()
+        var_content = open(tfvars).read() if os.path.exists(tfvars) else "No terraform.tfvars found."
+
+        return render_template("tf_preview_localstack.html", module=module, main_tf=main_content, tfvars=var_content)
+
+    except Exception as e:
+        return f"<pre>❌ Error: {str(e)}</pre>"
+
+
+@app.route("/terraform/localstack/tutorials/<module>/<command>", methods=["POST"])
+def run_terraform_localstack_command(module, command):
+    module_path = os.path.join(TERRAFORM_BASE_LOCALSTACK, module)
+
+    if not os.path.isdir(module_path):
+        return f"<pre>❌ Module not found: {module_path}</pre>", 404
+
+    os.chdir(module_path)
+
+    # Whitelisted terraform commands
+    valid_commands = {
+        "plan": ["terraform", "plan"],
+        "apply": ["terraform", "apply", "-auto-approve"],
+        "destroy": ["terraform", "destroy", "-auto-approve"],
+        "show": ["terraform", "show"],
+        "output": ["terraform", "output"],
+        "validate": ["terraform", "validate"],
+        "fmt": ["terraform", "fmt"]
+    }
+
+    if command not in valid_commands:
+        return f"<pre>❌ Unsupported command: {command}</pre>", 400
+
+    try:
+        # Always init first
+        subprocess.run(["terraform", "init", "-input=false"], check=True, capture_output=True, text=True)
+
+        # Run the actual command
+        result = subprocess.run(valid_commands[command], capture_output=True, text=True)
+
+        return render_template("tf_output.html",
+                               command=f"{command}: {module}",
+                               stdout=result.stdout,
+                               stderr=result.stderr)
+
+    except subprocess.CalledProcessError as e:
+        return render_template("error.html", command=command, stderr=e.stderr), 500
 
 
 
