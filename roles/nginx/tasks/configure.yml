@@ -1,0 +1,156 @@
+---
+- name: "Directory Exists | {{ nginx_runtime_root }}"
+  file:
+    state: directory
+    path: "{{ nginx_runtime_root }}"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: 0775
+  tags:
+    - directory-structure
+    - runtime-data
+    - nginx
+
+- name: nginx | update pidfile preferences
+  replace:
+    dest: "{{ item }}"
+    regexp: '/var/run/\$NAME.pid'
+    replace: "{{ nginx_pidfile_path }}"
+  with_items:
+    - /etc/init.d/nginx
+    - /etc/logrotate.d/nginx
+  tags:
+    - initscript
+    - runtime-data
+    - pidfile
+    - nginx
+
+- name: "Directory Exists | {{ nginx_docroot }}"
+  file:
+    state: directory
+    path: "{{ nginx_docroot }}"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: 0775
+  when: nginx_creates_docroot | bool
+  tags:
+    - directory-structure
+    - nginx
+
+- name: "Directory Exists | {{ nginx_auth_root }}"
+  file:
+    state: directory
+    path: "{{ nginx_auth_root }}"
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_group }}"
+    mode: 0775
+  when: nginx_auth_enabled | bool
+  tags:
+    - directory-structure
+    - nginx
+
+# TODO: unify Generate Passwords
+- name: Generate password
+  no_log: True
+  shell: "{{ item }}"
+  with_items:
+    - "echo -n \"{{ nginx_auth_username }}:\" > {{ nginx_auth_location }}"
+    - "openssl passwd -1 -salt {{ nginx_auth_salt }} {% if nginx_auth_enabled | bool %}{{ nginx_auth_password | mandatory }}{% endif %} >> {{ nginx_auth_location }}"
+  when: nginx_auth_enabled | bool
+  tags:
+    - improves-security
+    - nginx
+
+- name: Generate password (php/file specific blocks)
+  no_log: True
+  shell: "{{ item }}"
+  with_items:
+    - "echo -n \"{{ nginx_auth_username }}:\" > {{ nginx_php_path_blacklist_with_password_auth_location }}"
+    - "openssl passwd -1 -salt {{ nginx_auth_salt }} {% if nginx_php_path_blacklist_with_password_auth_generate | bool %}{{ nginx_auth_password | mandatory }}{% endif %} >> {{ nginx_php_path_blacklist_with_password_auth_location }}"
+  when: nginx_php_path_blacklist_with_password_auth_generate | bool
+  tags:
+    - improves-security
+    - nginx
+
+- name: Configure | nginx | ulimit
+  lineinfile:
+    state: present
+    dest: /etc/default/nginx
+    regexp: '#* *ULIMIT'
+    line: "ULIMIT='-n {{ nginx_worker_connections }}'"
+  notify: Reload Service | nginx
+  tags:
+    - configuration
+    - precise-configuration
+    - performance
+    - nginx
+
+- name: Upload Config | nginx
+  template:
+    src: etc/nginx/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: staff
+    mode: 0664
+  notify: Reload Service | nginx
+  tags:
+    - configuration
+    - template-configuration
+    - nginx
+
+- name: Disable Config | nginx | default
+  file:
+    state: absent
+    path: /etc/nginx/sites-enabled/default
+  notify: Reload Service | nginx
+  tags:
+    - configuration
+    - disable-configuration
+    - disable-default
+    - nginx
+
+- name: Upload Config | nginx | Standard
+  template:
+    src: "etc/nginx/sites-available/{{ nginx_configuration_type }}.conf"
+    dest: "/etc/nginx/sites-available/{{ nginx_configuration_name }}.conf"
+    owner: root
+    group: staff
+    mode: 0664
+  notify: Reload Service | nginx
+  tags:
+    - nginx
+
+- name: Upload Config | nginx | Deployment
+  template:
+    src: "etc/nginx/sites-available/deployment.conf"
+    dest: "/etc/nginx/sites-available/deployment.conf"
+    owner: root
+    group: staff
+    mode: 0664
+  when: nginx_php_enabled | bool
+  notify: Reload Service | nginx
+  tags:
+    - nginx
+
+- name: Enable Config | nginx | Standard
+  file:
+    state: link
+    src: "/etc/nginx/sites-available/{{ nginx_configuration_name }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ nginx_configuration_name }}"
+  notify: Reload Service | nginx
+  when: nginx_standard_configuration | bool
+  tags:
+    - configuration
+    - enable-configuration
+    - nginx
+
+- name: Add Nginx init.d Script | nginx | Standard
+  template:
+    src: etc/init.d/nginx
+    dest: /etc/init.d/nginx
+    owner: root
+    group: staff
+    mode: 0755
+  notify: Reload Service | nginx
+  tags:
+    - nginx

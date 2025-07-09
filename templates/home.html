@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Terraform Playground</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #e1f5fe);
+      color: #333;
+      padding: 50px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .container:hover {
+      transform: scale(1.01);
+    }
+
+    h1 {
+      color: #5c6bc0;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    h1 span {
+      font-size: 2.8rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.7;
+    }
+
+    ul {
+      margin-top: 20px;
+      padding-left: 20px;
+    }
+
+    ul li {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      background: linear-gradient(to right, #7e57c2, #5c6bc0);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: linear-gradient(to right, #5c6bc0, #3f51b5);
+    }
+
+    .link-docs {
+      display: inline-block;
+      margin-top: 20px;
+      color: #5c6bc0;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .link-docs:hover {
+      text-decoration: underline;
+    }
+
+    .emoji {
+      font-size: 1.4rem;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><span>🌍</span> Terraform Automation Playground</h1>
+    <p>Welcome to your local <strong>Terraform learning hub</strong>! This mini web tool helps you and your students to:</p>
+
+    <ul>
+      <li>💡 Understand what <strong>Terraform</strong> is and why it matters</li>
+      <li>🚀 Launch a fully offline lab with <code>LocalStack</code></li>
+      <li>📦 Write and run <code>.tf</code> files to create virtual AWS services</li>
+      <li>🔍 Explore plans, states, and resource graphs visually</li>
+      <li>👨‍🏫 Teach infrastructure-as-code without needing AWS accounts</li>
+    </ul>
+
+    <a class="link-docs" href="https://developer.hashicorp.com/terraform/docs" target="_blank">📖 Official Terraform Docs</a><br>
+
+    <a class="btn" href="/pre-req">🔧 Check Local Prerequisites</a>
+  </div>
+
+  <footer>
+    Built for students, by teachers 🚀 | Made with ❤️ using HTML + CSS
+  </footer>
+</body>
+</html>

@@ -1,0 +1,26 @@
+---
+dependencies:
+  - src: telusdigital.apt-repository
+    repository_key: "0xb9316a7bc7917b12"
+    repository_url: "deb http://ppa.launchpad.net/chris-lea/nginx-devel/ubuntu {{ ansible_distribution_release }} main"
+  - src: telusdigital.logrotate
+    logrotate_name: nginx
+    logrotate_create_logs_with_owner: "{{ nginx_user }}"
+  - src: telusdigital.python
+galaxy_info:
+  author: 'Chris Olstrom'
+  company: 'TELUS digital'
+  description: 'nginx is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP proxy server.'
+  issue_tracker_url: 'https://github.com/telusdigital/ansible-nginx/issues'
+  license: MIT
+  min_ansible_version: 1.9
+  platforms:
+    - name: Ubuntu
+      versions:
+      - lucid
+      - precise
+      - trusty
+      - utopic
+      - vivid
+  galaxy_tags:
+    - web

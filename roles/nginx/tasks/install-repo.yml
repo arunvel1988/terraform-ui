@@ -1,0 +1,26 @@
+---
+- name: Create File | preferences.d/nginx-naxsi
+  template:
+    src: etc/apt/preferences.d/nginx-naxsi
+    dest: /etc/apt/preferences.d/nginx-naxsi
+
+- name: Install Packages | apt
+  apt:
+    state: latest
+    pkg: "{{ item }}"
+  with_items: "{{ nginx_distribution }}"
+  tags:
+    - nginx
+    - software-installation
+    - using-apt
+
+- name: Install Packages | pip
+  pip:
+    state: latest
+    name: "{{ item }}"
+  with_items:
+    - ngxtop
+  tags:
+    - nginx
+    - software-installation
+    - using-pip

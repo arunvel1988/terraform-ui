@@ -1,0 +1,7 @@
+---
+- name: Reload Service | nginx
+  service:
+    state: reloaded
+    name: nginx
+  tags:
+    - disruptive

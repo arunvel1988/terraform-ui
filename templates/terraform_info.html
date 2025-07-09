@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Terraform Overview</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #fce4ec);
+            padding: 50px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #6a1b9a;
+            font-size: 2.5rem;
+        }
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+        }
+        ul {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        .btn {
+            display: inline-block;
+            margin: 20px 10px 0 0;
+            padding: 14px 28px;
+            background-color: #8e24aa;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #6a1b9a;
+        }
+        .btn-back {
+            margin-top: 30px;
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #607d8b;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+        .btn-back:hover {
+            background-color: #455a64;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Terraform Overview</h1>
+        <p>
+            <strong>Terraform</strong> is an open-source Infrastructure as Code (IaC) tool developed by HashiCorp. It lets you define, preview, and deploy cloud and on-prem infrastructure using declarative configuration files.
+        </p>
+        <ul>
+            <li>✅ <strong>Declarative Syntax:</strong> Define your infrastructure in <code>.tf</code> files, and Terraform figures out the rest.</li>
+            <li>🚀 <strong>Providers:</strong> Integrate with AWS, Azure, GCP, Kubernetes, and many more using plugins.</li>
+            <li>📦 <strong>State Management:</strong> Keeps track of infrastructure changes in a local or remote <code>terraform.tfstate</code> file.</li>
+            <li>🔁 <strong>Plan & Apply Cycle:</strong> See a preview of changes with <code>terraform plan</code> before applying them with <code>terraform apply</code>.</li>
+        </ul>
+
+        <p>Where would you like to go next?</p>
+        <a class="btn" href="/terraform/local">🛠️ Local Terraform Setup</a>
+        <a class="btn" href="/terraform/localstack">🌩️ Use with LocalStack (Mock AWS)</a>
+        <a class="btn" href="/terraform/modules">📚 Understand Modules</a>
+        <br>
+        <a class="btn-back" href="/">⬅ Back to Home</a>
+    </div>
+</body>
+</html>

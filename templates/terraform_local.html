@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Local Terraform Installation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #eaf2f8;
+            padding: 50px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #6f42c1;
+            font-size: 2.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1::before {
+            content: "🌍";
+            font-size: 1.2em;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: #e2e3f3;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: #4b3e8e;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #f5f7fa;
+            padding: 20px;
+            border-left: 6px solid #6f42c1;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .btn-group {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .btn-back, .btn-forward {
+            margin: 10px 5px 0 0;
+            display: inline-block;
+            padding: 12px 25px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-forward {
+            background-color: #28a745;
+        }
+
+        .btn-forward:hover {
+            background-color: #218838;
+        }
+
+        .btn-tutorial {
+            background-color: #17a2b8;
+        }
+
+        .btn-tutorial:hover {
+            background-color: #138496;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Terraform Local Installation</h1>
+        <p><span class="highlight">Terraform</span> is a powerful Infrastructure as Code (IaC) tool that helps you provision and manage infrastructure safely and efficiently.</p>
+        
+        <pre>{{ result }}</pre>
+
+        <div class="btn-group">
+            <a class="btn-back" href="/terraform">⬅ Back to Terraform Overview</a>
+            <a class="btn-back" href="/">🏠 Home</a>            
+            <a class="btn-forward btn-tutorial" href="/terraform/local/tutorials">📚 Terraform Tutorials ➡</a>
+            <a class="btn-forward" href="/terraform/modules">Next: Terraform Modules ➡</a>
+        </div>
+    </div>
+</body>
+</html>
