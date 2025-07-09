@@ -5,7 +5,7 @@ import os
 import uuid
 import docker
 from flask import Flask, render_template, request, redirect, url_for
-
+import socket
 
 app = Flask(__name__)
 
@@ -253,6 +253,93 @@ def run_terraform_command(module, command):
 
 
 
+#########################################################################################
+# terraorm backend
+
+
+
+
+@app.route('/terraform/local/tutorials/remote_backend/')
+def remote_backend():
+    return render_template('remote_backend.html')
+
+
+def is_port_open(host, port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        return sock.connect_ex((host, port)) == 0
+
+
+
+@app.route('/start_minio')
+def start_minio():
+    client = docker.from_env()
+    volume_name = "minio_data"
+    minio_port = 9990
+    console_port = 9991
+
+    # Check if ports are already used
+    if is_port_open('localhost', minio_port) or is_port_open('localhost', console_port):
+        return render_template("start_minio.html",
+            emoji="⚠️",
+            title="Ports in Use",
+            message=f"Ports {minio_port} or {console_port} are already in use. Please stop the conflicting service or use different ports.",
+            links=[]
+        )
+
+    # Check if MinIO container is already running
+    try:
+        container = client.containers.get("minio")
+        if container.status == "running":
+            return render_template("start_minio.html",
+                emoji="✅",
+                title="MinIO is already running",
+                message="Access it using the links below.",
+                links=[
+                    {"label": "📦 MinIO Service", "url": f"http://localhost:{minio_port}"},
+                    {"label": "🛠️ MinIO Console", "url": f"http://localhost:{console_port}"}
+                ]
+            )
+    except docker.errors.NotFound:
+        pass
+
+    # Create volume if not present
+    try:
+        client.volumes.get(volume_name)
+    except docker.errors.NotFound:
+        client.volumes.create(name=volume_name)
+
+    # Run MinIO container
+    try:
+        client.containers.run(
+            "minio/minio",
+            "server /data --console-address :9001",
+            name="minio",
+            ports={"9000/tcp": minio_port, "9001/tcp": console_port},
+            environment={
+                "MINIO_ROOT_USER": "minioadmin",
+                "MINIO_ROOT_PASSWORD": "minioadmin"
+            },
+            volumes={volume_name: {"bind": "/data", "mode": "rw"}},
+            detach=True
+        )
+
+        return render_template("start_minio.html",
+            emoji="🚀",
+            title="MinIO Started",
+            message="MinIO was successfully launched with persistent volume.",
+            links=[
+                {"label": "📦 MinIO Endpoint", "url": f"http://localhost:{minio_port}"},
+                {"label": "🛠️ MinIO Console", "url": f"http://localhost:{console_port}"}
+            ]
+        )
+
+    except docker.errors.APIError as e:
+        return render_template("start_minio.html",
+            emoji="❌",
+            title="Docker Error",
+            message=e.explanation,
+            links=[]
+        )
 
 
 
@@ -525,6 +612,8 @@ def ansible_tower():
         output=output,
         install_requested=install_requested
     )
+
+
 
 
 ########################## Ansible Tower  end ##########################################################
