@@ -1,0 +1,36 @@
+resource "random_pet" "names" {
+  count  = 3
+  length = 2
+}
+
+resource "docker_container" "web_containers" {
+  count = 3
+
+  name  = "web-${random_pet.names[count.index].id}"
+  image = "nginxdemos/hello"
+
+  ports {
+    internal = 80
+    external = 8000 + count.index
+  }
+}
+
+
+resource "random_password" "mysql_pass" {
+  length  = 20
+  special = true
+}
+
+resource "docker_container" "mysql" {
+  name  = "secure-mysql"
+  image = "mysql:8"
+
+  env = [
+    "MYSQL_ROOT_PASSWORD=${random_password.mysql_pass.result}"
+  ]
+
+  ports {
+    internal = 3306
+    external = 3306
+  }
+}
