@@ -1,3 +1,0 @@
-Package: nginx-common nginx-naxsi
-Pin: version 1.13.1*
-Pin-Priority: 1337

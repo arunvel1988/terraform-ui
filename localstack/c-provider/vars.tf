@@ -1,23 +1,28 @@
-variable "nginx_image" {
-  description = "Docker image name for nginx"
+variable "aws_region" {
+  description = "AWS region to use"
   type        = string
-  default     = "nginx:alpine"
+  default     = "us-east-1"
 }
 
-variable "container_name" {
-  description = "Name of the container"
+variable "access_key" {
+  description = "Mock AWS Access Key for LocalStack"
   type        = string
-  default     = "nginx"
+  default     = "mock_access_key"
 }
 
-variable "internal_port" {
-  description = "Internal port exposed by the container"
-  type        = number
-  default     = 80
+variable "secret_key" {
+  description = "Mock AWS Secret Key for LocalStack"
+  type        = string
+  default     = "mock_secret_key"
 }
 
-variable "external_port" {
-  description = "Port to map to on the host"
+variable "queue_name" {
+  description = "Name of the SQS queue"
+  type        = string
+}
+
+variable "visibility_timeout" {
+  description = "Visibility timeout in seconds"
   type        = number
-  default     = 8080
+  default     = 30
 }

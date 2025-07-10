@@ -1,22 +1,32 @@
 terraform {
   required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
     }
   }
+  backend "local" {}  # Optional, stores state locally
 }
 
 
-resource "docker_image" "nginx" {
-  name = "nginx:latest"
-}
+provider "aws" {
+  region                      = "us-east-1"
+  access_key                 = "mock_access_key"
+  secret_key                 = "mock_secret_key"
+  skip_credentials_validation = true
+  skip_metadata_api_check     = true
+  skip_requesting_account_id  = true        # <--- This is critical
+  s3_use_path_style           = true
 
-resource "docker_container" "nginx" {
-  name  = "nginx"
-  image = docker_image.nginx.image_id
-  ports {
-    internal = 80
-    external = 8080
+  endpoints {
+    s3 = "http://localhost:4566"
   }
+}
+
+resource "aws_s3_bucket" "test_bucket" {
+  bucket = "my-localstack-bucket"
+}
+
+output "bucket_url" {
+  value = "http://localhost:4566/${aws_s3_bucket.test_bucket.bucket}"
 }

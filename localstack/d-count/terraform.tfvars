@@ -1,4 +1,3 @@
-nginx_image    = "nginx:alpine"
-container_name = "web-nginx5"
-internal_port  = 80
-external_port  = 8090
+bucket_count = 3
+bucket_name_prefix = "s3-test-project"
+dynamodb_table_name = "test-data-table"

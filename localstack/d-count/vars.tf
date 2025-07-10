@@ -1,23 +1,19 @@
-variable "nginx_image" {
-  description = "Docker image name for nginx"
-  type        = string
-  default     = "nginx:alpine"
+variable "aws_region" {
+  description = "AWS region to use (mocked)"
+  default     = "us-east-1"
 }
 
-variable "container_name" {
-  description = "Name of the container"
-  type        = string
-  default     = "nginx"
+variable "bucket_name_prefix" {
+  description = "Prefix for S3 bucket names"
+  default     = "teaching-demo-bucket"
 }
 
-variable "internal_port" {
-  description = "Internal port exposed by the container"
-  type        = number
-  default     = 80
+variable "bucket_count" {
+  description = "Number of S3 buckets to create"
+  default     = 2
 }
 
-variable "external_port" {
-  description = "Port to map to on the host"
-  type        = number
-  default     = 8090
+variable "dynamodb_table_name" {
+  description = "Name of the DynamoDB table"
+  default     = "teaching-demo-table"
 }

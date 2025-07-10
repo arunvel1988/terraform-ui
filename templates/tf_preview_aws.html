@@ -46,27 +46,25 @@
     <h1>📘 Module: {{ module.replace('_', ' ').title() }}</h1>
 
     <div class="buttons">
-        <form method="post" action="/terraform/local/tutorials/{{ module }}/apply">
+        <form method="post" action="/terraform/aws/tutorials/{{ module }}/apply">
             <button>🚀 Apply</button>
         </form>
-        <form method="post" action="/terraform/local/tutorials/{{ module }}/destroy">
+        <form method="post" action="/terraform/aws/tutorials/{{ module }}/destroy">
             <button>🧨 Destroy</button>
         </form>
-        <form method="post" action="/terraform/local/tutorials/{{ module }}/plan">
+        <form method="post" action="/terraform/aws/tutorials/{{ module }}/plan">
             <button>📋 Plan</button>
         </form>
-        <form method="post" action="/terraform/local/tutorials/{{ module }}/validate">
+        <form method="post" action="/terraform/aws/tutorials/{{ module }}/validate">
             <button>✅ Validate</button>
         </form>
-        <form method="post" action="/terraform/local/tutorials/{{ module }}/fmt">
+        <form method="post" action="/terraform/aws/tutorials/{{ module }}/fmt">
             <button>🧹 Format</button>
         </form>
-        <a href="/terraform/local/tutorials"><button>🏠 Home</button></a>
-        <a href="/terraform/local/tutorials/remote_backend"><button>🏠 Remote Backend</button></a>
-        <a href="/terraform/workspace"><button> Terraform Workspace</button></a>
+        <a href="/terraform/aws/tutorials"><button>🏠 Home</button></a>
+       
         
     </div>
-  
 
     <h2>📄 main.tf</h2>
     <pre>{{ main_tf }}</pre>
