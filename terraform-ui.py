@@ -98,7 +98,7 @@ def prereq():
     pip_path = os.path.join(venv_dir, "bin", "pip")
     if os.path.isfile("requirements.txt") and os.path.exists(pip_path):
         try:
-            subprocess.run([pip_path, "install", "-r", "requirements.txt"], check=True)
+            subprocess.run([pip3, "install", "-r", "requirements.txt"], check=True)
             results["requirements"] = "✅ Installed"
         except Exception as e:
             results["requirements"] = f"❌ Failed to install → {e}"
