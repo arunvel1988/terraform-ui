@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e  # Exit immediately on error
+set -e  # Exit on error
 
 echo "🔍 Checking if python3-venv is installed..."
 
@@ -13,19 +13,22 @@ else
     echo "✅ python3-venv is already installed."
 fi
 
-# Create virtual environment
+# Create virtual environment if missing or broken
 VENV_DIR="venv"
+ACTIVATE="$VENV_DIR/bin/activate"
 
-if [ ! -d "$VENV_DIR" ]; then
-    echo "📦 Creating virtual environment in $VENV_DIR..."
+if [ ! -f "$ACTIVATE" ]; then
+    echo "📦 (Re)creating virtual environment in $VENV_DIR..."
+    rm -rf "$VENV_DIR"
     python3 -m venv "$VENV_DIR"
     echo "✅ Virtual environment created."
 else
-    echo "✅ Virtual environment already exists."
+    echo "✅ Virtual environment already exists and is valid."
 fi
 
 # Activate virtual environment
-source "$VENV_DIR/bin/activate"
+echo "🐍 Activating virtual environment..."
+source "$ACTIVATE"
 
 # Install requirements
 if [ -f "requirements.txt" ]; then
