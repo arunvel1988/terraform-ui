@@ -7,12 +7,8 @@ import docker
 from flask import Flask, render_template, request, redirect, url_for, render_template_string
 import socket
 
-app = Flask(__name__)
 
-import os
-import shutil
-import subprocess
-from flask import render_template
+app = Flask(__name__)
 
 def get_os_family():
     if os.path.exists("/etc/debian_version"):
@@ -25,23 +21,37 @@ def get_os_family():
 def install_package(tool, os_family):
     package_map = {
         "docker": "docker.io",
-        "pip3": "python3-pip"
+        "pip3": "python3-pip",
+        "python3-venv": "python3-venv"
     }
+
     package_name = package_map.get(tool, tool)
 
     try:
         if os_family == "debian":
             subprocess.run(["sudo", "apt", "update"], check=True)
-            subprocess.run(["sudo", "apt", "install", "-y", package_name], check=True)
+            if tool == "terraform":
+                subprocess.run(["sudo", "apt", "install", "-y", "gnupg", "software-properties-common", "curl"], check=True)
+                subprocess.run(["curl", "-fsSL", "https://apt.releases.hashicorp.com/gpg", "-o", "hashicorp.gpg"], check=True)
+                subprocess.run(["sudo", "gpg", "--dearmor", "-o", "/usr/share/keyrings/hashicorp-archive-keyring.gpg", "hashicorp.gpg"], check=True)
+                subprocess.run([
+                    "sudo", "tee", "/etc/apt/sources.list.d/hashicorp.list"
+                ], input=f"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\n", text=True, check=True)
+                subprocess.run(["sudo", "apt", "update"], check=True)
+                subprocess.run(["sudo", "apt", "install", "-y", "terraform"], check=True)
+            else:
+                subprocess.run(["sudo", "apt", "install", "-y", package_name], check=True)
         elif os_family == "redhat":
             subprocess.run(["sudo", "yum", "install", "-y", package_name], check=True)
+        else:
+            return False, "Unsupported OS"
         return True, None
     except Exception as e:
         return False, str(e)
 
 @app.route("/pre-req")
 def prereq():
-    tools = ["pip3", "podman", "openssl", "docker", "terraform"]
+    tools = ["python3-venv", "pip3", "podman", "openssl", "docker", "terraform"]
     results = {}
     os_family = get_os_family()
 
@@ -66,14 +76,17 @@ def prereq():
     else:
         results["virtualenv"] = "✅ Already exists"
 
-    # 🧪 Install Python dependencies in virtualenv
-    try:
-        subprocess.run([f"./{venv_dir}/bin/pip", "install", "-r", "requirements.txt"], check=True)
-        results["requirements"] = "✅ Installed"
-    except Exception as e:
-        results["requirements"] = f"❌ Failed to install → {e}"
+    # 🧪 Install requirements.txt inside venv
+    pip_path = os.path.join(venv_dir, "bin", "pip")
+    if os.path.isfile("requirements.txt") and os.path.exists(pip_path):
+        try:
+            subprocess.run([pip_path, "install", "-r", "requirements.txt"], check=True)
+            results["requirements"] = "✅ Installed"
+        except Exception as e:
+            results["requirements"] = f"❌ Failed to install → {e}"
+    else:
+        results["requirements"] = f"❌ Failed to install → requirements.txt or pip not found"
 
-    # Docker binary check
     docker_installed = shutil.which("docker") is not None
 
     return render_template("prereq.html", results=results, os_family=os_family, docker_installed=docker_installed)
