@@ -82,7 +82,7 @@ def install_portainer_route():
 
 @app.route("/pre-req")
 def prereq():
-    tools = ["pip3", "podman", "openssl", "docker","terraform"]
+    tools = ["pip3", "podman", "openssl", "docker.io","terraform"]
     results = {}
     os_family = get_os_family()
 
