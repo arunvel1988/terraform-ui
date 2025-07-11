@@ -41,6 +41,23 @@ else
     exit 1
 fi
 
+# Check Docker installed
+if ! command -v docker &> /dev/null; then
+    echo "❌ Docker is not installed. Please install Docker first."
+    exit 1
+fi
+
+# Give permissions to Docker socket (insecure but OK for demo/dev)
+if [ -S /var/run/docker.sock ]; then
+    echo "🛠️  Fixing Docker socket permissions (chmod 777)..."
+    sudo chmod 777 /var/run/docker.sock
+    echo "✅ Docker socket permissions updated."
+else
+    echo "❌ Docker socket not found!"
+    exit 1
+fi
+
+
 # Run Python app
 echo "🚀 Running terraform-ui.py..."
 python3 terraform-ui.py
