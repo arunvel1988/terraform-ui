@@ -631,6 +631,266 @@ def run_terraform_localstack_command(module, command):
 
 
 
-########################## Ansible Tower  end ##########################################################
+########################## Terraform AWS - start ##########################################################
+
+
+@app.route("/terraform/aws")
+def terraform_aws():
+    return render_template("aws_info.html")
+
+
+
+
+
+import os
+
+TERRAFORM_BASE_AWS = os.path.abspath("aws")
+
+@app.route("/terraform/aws/tutorials", methods=["GET"])
+def terraform_aws_tutorials():
+    try:
+        modules = sorted(os.listdir(TERRAFORM_BASE_AWS))
+        return render_template("tf_tutorials_aws.html", modules=modules)
+    except Exception as e:
+        return f"<pre>❌ Error loading tutorials: {str(e)}</pre>"
+
+
+
+
+
+@app.route("/terraform/aws/tutorials/<module>/", methods=["GET"])
+def preview_aws_module(module):
+    module_path = os.path.join(TERRAFORM_BASE_AWS, module)
+
+    try:
+        main_tf = os.path.join(module_path, "main.tf")
+        tfvars = os.path.join(module_path, "terraform.tfvars")
+
+        if not os.path.exists(main_tf):
+            return f"<pre>❌ main.tf not found in {module}</pre>"
+
+        main_content = open(main_tf).read()
+        var_content = open(tfvars).read() if os.path.exists(tfvars) else "No terraform.tfvars found."
+
+        return render_template("tf_preview_aws.html", module=module, main_tf=main_content, tfvars=var_content)
+
+    except Exception as e:
+        return f"<pre>❌ Error: {str(e)}</pre>"
+
+
+@app.route("/terraform/aws/tutorials/<module>/<command>", methods=["POST"])
+def run_terraform_aws_command(module, command):
+    module_path = os.path.join(TERRAFORM_BASE_AWS, module)
+
+    if not os.path.isdir(module_path):
+        return f"<pre>❌ Module not found: {module_path}</pre>", 404
+
+    os.chdir(module_path)
+
+    # Whitelisted terraform commands
+    valid_commands = {
+        "plan": ["terraform", "plan"],
+        "apply": ["terraform", "apply", "-auto-approve"],
+        "destroy": ["terraform", "destroy", "-auto-approve"],
+        "show": ["terraform", "show"],
+        "output": ["terraform", "output"],
+        "validate": ["terraform", "validate"],
+        "fmt": ["terraform", "fmt"]
+    }
+
+    if command not in valid_commands:
+        return f"<pre>❌ Unsupported command: {command}</pre>", 400
+
+    try:
+        # Always init first
+        subprocess.run(["terraform", "init", "-input=false"], check=True, capture_output=True, text=True)
+
+        # Run the actual command
+        result = subprocess.run(valid_commands[command], capture_output=True, text=True)
+
+        return render_template("tf_output.html",
+                               command=f"{command}: {module}",
+                               stdout=result.stdout,
+                               stderr=result.stderr)
+
+    except subprocess.CalledProcessError as e:
+        return render_template("error.html", command=command, stderr=e.stderr), 500
+    
+    ################################## terraform aws =  end ##########################################
+
+
+    ################################## terraform azure start ##########################################
+
+@app.route("/terraform/azure")
+def terraform_azure():
+    return render_template("azure_info.html")
+
+
+
+
+
+import os
+
+TERRAFORM_BASE_AZURE = os.path.abspath("azure")
+
+@app.route("/terraform/azure/tutorials", methods=["GET"])
+def terraform_azure_tutorials():
+    try:
+        modules = sorted(os.listdir(TERRAFORM_BASE_AZURE))
+        return render_template("tf_tutorials_azure.html", modules=modules)
+    except Exception as e:
+        return f"<pre>❌ Error loading tutorials: {str(e)}</pre>"
+
+
+
+
+
+@app.route("/terraform/azure/tutorials/<module>/", methods=["GET"])
+def preview_azure_module(module):
+    module_path = os.path.join(TERRAFORM_BASE_AZURE, module)
+
+    try:
+        main_tf = os.path.join(module_path, "main.tf")
+        tfvars = os.path.join(module_path, "terraform.tfvars")
+
+        if not os.path.exists(main_tf):
+            return f"<pre>❌ main.tf not found in {module}</pre>"
+
+        main_content = open(main_tf).read()
+        var_content = open(tfvars).read() if os.path.exists(tfvars) else "No terraform.tfvars found."
+
+        return render_template("tf_preview_azure.html", module=module, main_tf=main_content, tfvars=var_content)
+
+    except Exception as e:
+        return f"<pre>❌ Error: {str(e)}</pre>"
+
+
+@app.route("/terraform/azure/tutorials/<module>/<command>", methods=["POST"])
+def run_terraform_azure_command(module, command):
+    module_path = os.path.join(TERRAFORM_BASE_AWS, module)
+
+    if not os.path.isdir(module_path):
+        return f"<pre>❌ Module not found: {module_path}</pre>", 404
+
+    os.chdir(module_path)
+
+    # Whitelisted terraform commands
+    valid_commands = {
+        "plan": ["terraform", "plan"],
+        "apply": ["terraform", "apply", "-auto-approve"],
+        "destroy": ["terraform", "destroy", "-auto-approve"],
+        "show": ["terraform", "show"],
+        "output": ["terraform", "output"],
+        "validate": ["terraform", "validate"],
+        "fmt": ["terraform", "fmt"]
+    }
+
+    if command not in valid_commands:
+        return f"<pre>❌ Unsupported command: {command}</pre>", 400
+
+    try:
+        # Always init first
+        subprocess.run(["terraform", "init", "-input=false"], check=True, capture_output=True, text=True)
+
+        # Run the actual command
+        result = subprocess.run(valid_commands[command], capture_output=True, text=True)
+
+        return render_template("tf_output.html",
+                               command=f"{command}: {module}",
+                               stdout=result.stdout,
+                               stderr=result.stderr)
+
+    except subprocess.CalledProcessError as e:
+        return render_template("error.html", command=command, stderr=e.stderr), 500
+    
+     ################################## terraform azure end ##########################################
+
+
+
+    ################################## terraform gcp start ##########################################
+
+@app.route("/terraform/gcp")
+def terraform_gcp():
+    return render_template("gcp_info.html")
+
+
+
+
+
+import os
+
+TERRAFORM_BASE_GCP = os.path.abspath("gcp")
+
+@app.route("/terraform/gcp/tutorials", methods=["GET"])
+def terraform_gcp_tutorials():
+    try:
+        modules = sorted(os.listdir(TERRAFORM_BASE_GCP))
+        return render_template("tf_tutorials_gcp.html", modules=modules)
+    except Exception as e:
+        return f"<pre>❌ Error loading tutorials: {str(e)}</pre>"
+
+
+
+
+
+@app.route("/terraform/gcp/tutorials/<module>/", methods=["GET"])
+def preview_gcp_module(module):
+    module_path = os.path.join(TERRAFORM_BASE_GCP, module)
+
+    try:
+        main_tf = os.path.join(module_path, "main.tf")
+        tfvars = os.path.join(module_path, "terraform.tfvars")
+
+        if not os.path.exists(main_tf):
+            return f"<pre>❌ main.tf not found in {module}</pre>"
+
+        main_content = open(main_tf).read()
+        var_content = open(tfvars).read() if os.path.exists(tfvars) else "No terraform.tfvars found."
+
+        return render_template("tf_preview_gcp.html", module=module, main_tf=main_content, tfvars=var_content)
+
+    except Exception as e:
+        return f"<pre>❌ Error: {str(e)}</pre>"
+
+
+@app.route("/terraform/gcp/tutorials/<module>/<command>", methods=["POST"])
+def run_terraform_gcp_command(module, command):
+    module_path = os.path.join(TERRAFORM_BASE_GCP, module)
+
+    if not os.path.isdir(module_path):
+        return f"<pre>❌ Module not found: {module_path}</pre>", 404
+
+    os.chdir(module_path)
+
+    # Whitelisted terraform commands
+    valid_commands = {
+        "plan": ["terraform", "plan"],
+        "apply": ["terraform", "apply", "-auto-approve"],
+        "destroy": ["terraform", "destroy", "-auto-approve"],
+        "show": ["terraform", "show"],
+        "output": ["terraform", "output"],
+        "validate": ["terraform", "validate"],
+        "fmt": ["terraform", "fmt"]
+    }
+
+    if command not in valid_commands:
+        return f"<pre>❌ Unsupported command: {command}</pre>", 400
+
+    try:
+        # Always init first
+        subprocess.run(["terraform", "init", "-input=false"], check=True, capture_output=True, text=True)
+
+        # Run the actual command
+        result = subprocess.run(valid_commands[command], capture_output=True, text=True)
+
+        return render_template("tf_output.html",
+                               command=f"{command}: {module}",
+                               stdout=result.stdout,
+                               stderr=result.stderr)
+
+    except subprocess.CalledProcessError as e:
+        return render_template("error.html", command=command, stderr=e.stderr), 500
+    
+     ################################## terraform gcp end ##########################################
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5003, debug=True)
