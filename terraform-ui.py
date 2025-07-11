@@ -9,6 +9,12 @@ import socket
 
 
 app = Flask(__name__)
+import os
+import subprocess
+import shutil
+from flask import Flask, render_template
+
+app = Flask(__name__)
 
 def get_os_family():
     if os.path.exists("/etc/debian_version"):
@@ -31,21 +37,35 @@ def install_package(tool, os_family):
         if os_family == "debian":
             subprocess.run(["sudo", "apt", "update"], check=True)
             if tool == "terraform":
+                # Install prerequisites
                 subprocess.run(["sudo", "apt", "install", "-y", "gnupg", "software-properties-common", "curl"], check=True)
+
+                # Download and store GPG key
                 subprocess.run(["curl", "-fsSL", "https://apt.releases.hashicorp.com/gpg", "-o", "hashicorp.gpg"], check=True)
                 subprocess.run(["sudo", "gpg", "--dearmor", "-o", "/usr/share/keyrings/hashicorp-archive-keyring.gpg", "hashicorp.gpg"], check=True)
-                subprocess.run([
-                    "sudo", "tee", "/etc/apt/sources.list.d/hashicorp.list"
-                ], input=f"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\n", text=True, check=True)
+
+                # Get distro codename (like focal, jammy, etc.)
+                codename = subprocess.check_output(["lsb_release", "-cs"], text=True).strip()
+
+                # Write correct repo line
+                apt_line = f"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {codename} main\n"
+                with open("hashicorp.list", "w") as f:
+                    f.write(apt_line)
+                subprocess.run(["sudo", "mv", "hashicorp.list", "/etc/apt/sources.list.d/hashicorp.list"], check=True)
+
+                # Update & install Terraform
                 subprocess.run(["sudo", "apt", "update"], check=True)
                 subprocess.run(["sudo", "apt", "install", "-y", "terraform"], check=True)
             else:
                 subprocess.run(["sudo", "apt", "install", "-y", package_name], check=True)
+
         elif os_family == "redhat":
             subprocess.run(["sudo", "yum", "install", "-y", package_name], check=True)
         else:
             return False, "Unsupported OS"
+
         return True, None
+
     except Exception as e:
         return False, str(e)
 
