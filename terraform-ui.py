@@ -83,27 +83,7 @@ def prereq():
             else:
                 results[tool] = f"❌ Not Found → ❌ Error: {error}"
 
-    # Virtual environment
-    venv_dir = "venv"
-    if not os.path.isdir(venv_dir):
-        try:
-            subprocess.run(["python3", "-m", "venv", venv_dir], check=True)
-            results["virtualenv"] = "✅ Created"
-        except Exception as e:
-            results["virtualenv"] = f"❌ Failed to create → {e}"
-    else:
-        results["virtualenv"] = "✅ Already exists"
 
-    # Install requirements.txt
-    pip_path = os.path.join(venv_dir, "bin", "pip")
-    if os.path.isfile("requirements.txt") and os.path.exists(pip_path):
-        try:
-            subprocess.run([pip3, "install", "-r", "requirements.txt"], check=True)
-            results["requirements"] = "✅ Installed"
-        except Exception as e:
-            results["requirements"] = f"❌ Failed to install → {e}"
-    else:
-        results["requirements"] = f"❌ Failed to install → requirements.txt or pip not found"
 
     docker_installed = shutil.which("docker") is not None
     return render_template("prereq.html", results=results, os_family=os_family, docker_installed=docker_installed)
