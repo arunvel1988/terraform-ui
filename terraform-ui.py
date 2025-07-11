@@ -69,7 +69,7 @@ def install_package(tool, os_family):
 
 @app.route("/pre-req")
 def prereq():
-    tools = ["python3-venv", "pip3", "podman", "openssl", "docker", "terraform"]
+    tools = ["pip3", "podman", "openssl", "docker", "terraform"]
     results = {}
     os_family = get_os_family()
 
