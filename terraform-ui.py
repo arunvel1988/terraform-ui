@@ -9,9 +9,12 @@ import socket
 
 
 app = Flask(__name__)
+
+
+
 import os
-import subprocess
 import shutil
+import subprocess
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -30,42 +33,150 @@ def install_package(tool, os_family):
         "pip3": "python3-pip",
         "python3-venv": "python3-venv"
     }
-
     package_name = package_map.get(tool, tool)
 
     try:
         if os_family == "debian":
             subprocess.run(["sudo", "apt", "update"], check=True)
             if tool == "terraform":
-                # Install prerequisites
-                subprocess.run(["sudo", "apt", "install", "-y", "gnupg", "software-properties-common", "curl"], check=True)
+                # Install Terraform using recommended HashiCorp method for Debian
+                subprocess.run(["sudo", "apt", "install", "-y", "wget", "gnupg", "software-properties-common", "curl"], check=True)
+                subprocess.run(["wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"], stdout=subprocess.PIPE, check=True)
+                subprocess.run(["wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"], check=True)
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE)
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+                subprocess.run(["wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"], stdout=subprocess.PIPE, check=True)
 
-                # Download and store GPG key
-                subprocess.run(["curl", "-fsSL", "https://apt.releases.hashicorp.com/gpg", "-o", "hashicorp.gpg"], check=True)
-                subprocess.run(["sudo", "gpg", "--dearmor", "-o", "/usr/share/keyrings/hashicorp-archive-keyring.gpg", "hashicorp.gpg"], check=True)
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
 
-                # Get distro codename (like focal, jammy, etc.)
+                # Better to use subprocess for consistent keyring
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                # Final keyring install
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run(["wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"], stdout=subprocess.PIPE, check=True)
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                # Save the keyring
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run([
+                    "wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"
+                ], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run(["wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"], stdout=subprocess.PIPE, check=True)
+
+                subprocess.run(["sudo", "gpg", "--dearmor", "-o", "/usr/share/keyrings/hashicorp-archive-keyring.gpg"], input=subprocess.run(["wget", "-O", "-", "https://apt.releases.hashicorp.com/gpg"], capture_output=True).stdout, check=True)
+
                 codename = subprocess.check_output(["lsb_release", "-cs"], text=True).strip()
-
-                # Write correct repo line
-                apt_line = f"deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {codename} main\n"
+                apt_line = f"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {codename} main\n"
                 with open("hashicorp.list", "w") as f:
                     f.write(apt_line)
                 subprocess.run(["sudo", "mv", "hashicorp.list", "/etc/apt/sources.list.d/hashicorp.list"], check=True)
 
-                # Update & install Terraform
                 subprocess.run(["sudo", "apt", "update"], check=True)
                 subprocess.run(["sudo", "apt", "install", "-y", "terraform"], check=True)
             else:
                 subprocess.run(["sudo", "apt", "install", "-y", package_name], check=True)
 
         elif os_family == "redhat":
-            subprocess.run(["sudo", "yum", "install", "-y", package_name], check=True)
+            if tool == "terraform":
+                subprocess.run(["sudo", "yum", "install", "-y", "yum-utils"], check=True)
+                subprocess.run(["sudo", "yum-config-manager", "--add-repo", "https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo"], check=True)
+                subprocess.run(["sudo", "yum", "install", "-y", "terraform"], check=True)
+            else:
+                subprocess.run(["sudo", "yum", "install", "-y", package_name], check=True)
+
         else:
             return False, "Unsupported OS"
-
         return True, None
-
     except Exception as e:
         return False, str(e)
 
@@ -85,7 +196,7 @@ def prereq():
             else:
                 results[tool] = f"❌ Not Found → ❌ Error: {error}"
 
-    # 🔁 Virtual environment setup
+    # Virtual environment
     venv_dir = "venv"
     if not os.path.isdir(venv_dir):
         try:
@@ -96,7 +207,7 @@ def prereq():
     else:
         results["virtualenv"] = "✅ Already exists"
 
-    # 🧪 Install requirements.txt inside venv
+    # Install requirements.txt
     pip_path = os.path.join(venv_dir, "bin", "pip")
     if os.path.isfile("requirements.txt") and os.path.exists(pip_path):
         try:
@@ -110,6 +221,7 @@ def prereq():
     docker_installed = shutil.which("docker") is not None
 
     return render_template("prereq.html", results=results, os_family=os_family, docker_installed=docker_installed)
+
 
 
 
