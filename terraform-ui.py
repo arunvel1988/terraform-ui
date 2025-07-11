@@ -108,12 +108,6 @@ def prereq():
     docker_installed = shutil.which("docker") is not None
     return render_template("prereq.html", results=results, os_family=os_family, docker_installed=docker_installed)
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-
-
 
 
 
