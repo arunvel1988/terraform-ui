@@ -9,7 +9,11 @@ import socket
 
 app = Flask(__name__)
 
-# Detect OS type (for future package installations)
+import os
+import shutil
+import subprocess
+from flask import render_template
+
 def get_os_family():
     if os.path.exists("/etc/debian_version"):
         return "debian"
@@ -18,17 +22,75 @@ def get_os_family():
     else:
         return "unknown"
 
-# Install missing package
 def install_package(tool, os_family):
+    package_map = {
+        "docker": "docker.io",
+        "pip3": "python3-pip"
+    }
+    package_name = package_map.get(tool, tool)
+
     try:
         if os_family == "debian":
             subprocess.run(["sudo", "apt", "update"], check=True)
-            subprocess.run(["sudo", "apt", "install", "-y", tool], check=True)
+            subprocess.run(["sudo", "apt", "install", "-y", package_name], check=True)
         elif os_family == "redhat":
-            subprocess.run(["sudo", "yum", "install", "-y", tool], check=True)
+            subprocess.run(["sudo", "yum", "install", "-y", package_name], check=True)
         return True, None
     except Exception as e:
         return False, str(e)
+
+@app.route("/pre-req")
+def prereq():
+    tools = ["pip3", "podman", "openssl", "docker", "terraform"]
+    results = {}
+    os_family = get_os_family()
+
+    for tool in tools:
+        if shutil.which(tool):
+            results[tool] = "✅ Installed"
+        else:
+            success, error = install_package(tool, os_family)
+            if success:
+                results[tool] = "❌ Not Found → 🛠️ Installed"
+            else:
+                results[tool] = f"❌ Not Found → ❌ Error: {error}"
+
+    # 🔁 Virtual environment setup
+    venv_dir = "venv"
+    if not os.path.isdir(venv_dir):
+        try:
+            subprocess.run(["python3", "-m", "venv", venv_dir], check=True)
+            results["virtualenv"] = "✅ Created"
+        except Exception as e:
+            results["virtualenv"] = f"❌ Failed to create → {e}"
+    else:
+        results["virtualenv"] = "✅ Already exists"
+
+    # 🧪 Install Python dependencies in virtualenv
+    try:
+        subprocess.run([f"./{venv_dir}/bin/pip", "install", "-r", "requirements.txt"], check=True)
+        results["requirements"] = "✅ Installed"
+    except Exception as e:
+        results["requirements"] = f"❌ Failed to install → {e}"
+
+    # Docker binary check
+    docker_installed = shutil.which("docker") is not None
+
+    return render_template("prereq.html", results=results, os_family=os_family, docker_installed=docker_installed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Check if Portainer is actually installed and running (or exists as a container)
 def is_portainer_installed():
@@ -80,23 +142,7 @@ def install_portainer_route():
 
     return render_template("portainer.html", installed=installed, message=message, url=portainer_url)
 
-@app.route("/pre-req")
-def prereq():
-    tools = ["pip3", "podman", "openssl", "docker.io","terraform"]
-    results = {}
-    os_family = get_os_family()
 
-    for tool in tools:
-        if shutil.which(tool):
-            results[tool] = "✅ Installed"
-        else:
-            success, error = install_package(tool, os_family)
-            if success:
-                results[tool] = "❌ Not Found → 🛠️ Installed"
-            else:
-                results[tool] = f"❌ Not Found → ❌ Error: {error}"
-    docker_installed = shutil.which("docker") is not None
-    return render_template("prereq.html", results=results, os_family=os_family, docker_installed=docker_installed)
 
 
 ##################ANSIBLE INSTALLATION##################
