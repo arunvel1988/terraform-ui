@@ -77,7 +77,7 @@ def prereq():
 
     for tool in tools:
         if shutil.which(tool):
-            results[tool] = "✅ Installed"
+            results[tool] = " Installed"
         else:
             success, error = install_package(tool, os_family)
             if success:
@@ -147,7 +147,7 @@ def install_portainer_route():
             success, message = run_portainer()
             installed = success
         else:
-            message = "ℹ️ Portainer is already installed."
+            message = " Portainer is already installed."
 
     return render_template("portainer.html", installed=installed, message=message, url=portainer_url)
 
@@ -166,7 +166,7 @@ def terraform_local():
         # Check if Terraform is already installed
         try:
             terraform_version = subprocess.check_output(["terraform", "-version"], stderr=subprocess.STDOUT).decode()
-            return render_template("terraform_local.html", result=f"✅ Terraform is already installed:\n{terraform_version}")
+            return render_template("terraform_local.html", result=f" Terraform is already installed:\n{terraform_version}")
         except subprocess.CalledProcessError:
             pass  # not installed yet
         except FileNotFoundError:
@@ -209,12 +209,12 @@ def terraform_local():
             output_logs += f"\n$ {' '.join(cmd)}\n{process.stdout}"
 
         terraform_version = subprocess.check_output(["terraform", "-version"]).decode()
-        output_logs += f"\n✅ Terraform Installed Successfully:\n{terraform_version}"
+        output_logs += f"\n Terraform Installed Successfully:\n{terraform_version}"
 
     except subprocess.CalledProcessError as e:
-        output_logs = f"❌ Error during installation:\n{e}\n\n{e.stderr if hasattr(e, 'stderr') else ''}"
+        output_logs = f" Error during installation:\n{e}\n\n{e.stderr if hasattr(e, 'stderr') else ''}"
     except Exception as ex:
-        output_logs = f"⚠️ Unexpected error: {str(ex)}"
+        output_logs = f" Unexpected error: {str(ex)}"
 
     return render_template("terraform_local.html", result=output_logs)
 
@@ -541,11 +541,11 @@ def install_localstack():
                     <title>LocalStack Status</title>
                 </head>
                 <body style="font-family: Arial, sans-serif;">
-                    <h2>✅ LocalStack is already running!</h2>
+                    <h2> LocalStack is already running!</h2>
                     <p>You can access it at: 
                         <a href="http://localhost:4566" target="_blank">http://localhost:4566</a>
                     </p>
-                    <p>🧰 <a href="https://docs.localstack.cloud/get-started/installation/" target="_blank">
+                    <p> <a href="https://docs.localstack.cloud/get-started/installation/" target="_blank">
                         Official Installation Docs</a>
                     </p>
                     <br>
@@ -584,11 +584,11 @@ def install_localstack():
                 <title>LocalStack Starting</title>
             </head>
             <body style="font-family: Arial, sans-serif;">
-                <h2>🚀 LocalStack is starting up!</h2>
+                <h2> LocalStack is starting up!</h2>
                 <p>Wait a few seconds, then access it here: 
                     <a href="http://localhost:4566" target="_blank">http://localhost:4566</a>
                 </p>
-                <p>🧰 <a href="https://docs.localstack.cloud/get-started/installation/" target="_blank">
+                <p> <a href="https://docs.localstack.cloud/get-started/installation/" target="_blank">
                     Official Installation Docs</a>
                 </p>
                 <br>
