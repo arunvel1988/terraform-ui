@@ -63,29 +63,29 @@
 <body>
 
 <header>
-    <h1>🌍 Terraform Backends</h1>
+    <h1> Terraform Backends</h1>
 </header>
 
 <main>
     <section>
-        <h2>📂 Local Backend</h2>
+        <h2> Local Backend</h2>
         <p>Stores Terraform state on the <strong>local disk</strong>. Ideal for personal or development use. No collaboration or locking.</p>
     </section>
 
     <section>
-        <h2>🌐 Remote Backend</h2>
+        <h2> Remote Backend</h2>
         <p>Enables <strong>shared state, collaboration, locking, and remote operations</strong>. Recommended for teams and production use.</p>
 
-        <h3>🧩 Choose a Remote Backend:</h3>
+        <h3> Choose a Remote Backend:</h3>
         <ul>
             <li>
                 <a href="{{ url_for('start_minio') }}">
-                    <button>🚀 MinIO (S3-compatible)</button>
+                    <button> MinIO (S3-compatible)</button>
                 </a>
             </li>
             <li>
-                <button onclick="alert('📦 AWS S3 stores Terraform state securely. Requires S3 bucket, IAM role, and region.')">
-                    🌍 AWS S3
+                <button onclick="alert(' AWS S3 stores Terraform state securely. Requires S3 bucket, IAM role, and region.')">
+                     AWS S3
                 </button>
             </li>
             <li>
